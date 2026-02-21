@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CED58E6E2F4A6BCB009029D5 /* SmartSpectraSwiftSDK in Frameworks */ = {isa = PBXBuildFile; productRef = CED58E6D2F4A6BCB009029D5 /* SmartSpectraSwiftSDK */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CE0845B82F4A60750004BD76 /* CameraApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CED58E6E2F4A6BCB009029D5 /* SmartSpectraSwiftSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = CameraApp;
 			packageProductDependencies = (
+				CED58E6D2F4A6BCB009029D5 /* SmartSpectraSwiftSDK */,
 			);
 			productName = CameraApp;
 			productReference = CE0845B82F4A60750004BD76 /* CameraApp.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = CE0845AF2F4A60750004BD76;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CED58E6C2F4A6BCB009029D5 /* XCRemoteSwiftPackageReference "SmartSpectra" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE0845B92F4A60750004BD76 /* Products */;
 			projectDirPath = "";
@@ -251,8 +260,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CLCY3F9M95;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to measure physiology metrics.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,8 +293,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CLCY3F9M95;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to measure physiology metrics.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +341,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CED58E6C2F4A6BCB009029D5 /* XCRemoteSwiftPackageReference "SmartSpectra" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Presage-Security/SmartSpectra";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CED58E6D2F4A6BCB009029D5 /* SmartSpectraSwiftSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CED58E6C2F4A6BCB009029D5 /* XCRemoteSwiftPackageReference "SmartSpectra" */;
+			productName = SmartSpectraSwiftSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CE0845B02F4A60750004BD76 /* Project object */;
 }
