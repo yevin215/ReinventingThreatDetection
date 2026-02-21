@@ -28,16 +28,20 @@ struct ContentView: View {
 
             Divider()
 
-            if let metrics = sdk.metricsBuffer {
+            if let metrics = sdk.metricsBuffer
+            {
                 let pulse = metrics.pulse.rate.last?.value
                 let breath = metrics.breathing.rate.last?.value
 
-                VStack(spacing: 6) {
+                VStack(spacing: 6)
+                {
                     Text("Pulse: \(pulse ?? 0, specifier: "%.0f") BPM")
                     Text("Breathing: \(breath ?? 0, specifier: "%.0f") RPM")
                 }
                 .font(.headline)
-            } else {
+            }
+            else
+            {
                 Text("Waiting for metrics…")
             }
         }
