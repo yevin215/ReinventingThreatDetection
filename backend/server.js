@@ -10,7 +10,15 @@ app.use(cors({
   methods: ["GET", "POST"]
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
+
+app.use((err, req, res, next) => {
+  if (err.type === "entity.too.large") {
+    console.error("Payload too large (increase express.json limit)");
+    return res.status(413).json({ error: "Payload too large" });
+  }
+  next(err);
+});
 
 const server = http.createServer(app);
 
@@ -58,8 +66,14 @@ app.post("/metrics", (req, res) => {
     riskLevel
   };
 
+  const frameBase64 = data.frameBase64;
+
   io.emit("riskUpdate", payload);
-  
+
+  if (frameBase64) {
+    io.emit("frameUpdate", { frameBase64 });
+  }
+
   res.json({ status: "ok", ...payload });
 });
 
