@@ -10,7 +10,8 @@ app.use(cors({
   methods: ["GET", "POST"]
 }));
 
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use((err, req, res, next) => {
   if (err.type === "entity.too.large") {
@@ -38,7 +39,17 @@ app.get("/", (req, res) => {
 app.post("/metrics", (req, res) => {
   const data = req.body;
 
-  console.log("Incoming metrics:", data);
+  console.log("Incoming metrics:", {
+  heartRate: data.heartRate,
+  breathingRate: data.breathingRate,
+  stressIndex: data.stressIndex,
+  engagement: data.engagement,
+  frameBytes: data.frameBase64 ? data.frameBase64.length : 0
+});
+
+if (frameBase64 && frameBase64.length > 200) {
+  io.emit("frameUpdate", { frameBase64 });
+}
 
   const heartRate = data.heartRate || 0;
   const breathingRate = data.breathingRate || 0;
