@@ -10,15 +10,8 @@ app.use(cors({
   methods: ["GET", "POST"]
 }));
 
-app.use(express.json({ limit: "5mb" }));
-
-app.use((err, req, res, next) => {
-  if (err.type === "entity.too.large") {
-    console.error("Payload too large (increase express.json limit)");
-    return res.status(413).json({ error: "Payload too large" });
-  }
-  next(err);
-});
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 const server = http.createServer(app);
 
@@ -34,7 +27,6 @@ app.get("/", (req, res) => {
   res.send("Threat Detection Backend Running");
 });
 
-// Metrics
 app.post("/metrics", (req, res) => {
   const data = req.body;
 
@@ -45,7 +37,6 @@ app.post("/metrics", (req, res) => {
   const stressIndex = data.stressIndex || 0;
   const engagement = data.engagement ?? 1;
 
-  // Risk Calc
   const riskScore = Math.min(
     100,
     stressIndex * 60 +
@@ -83,6 +74,15 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Dashboard disconnected:", socket.id);
   });
+});
+
+// Error handler must be last
+app.use((err, req, res, next) => {
+  if (err.type === "entity.too.large") {
+    console.error("Payload too large");
+    return res.status(413).json({ error: "Payload too large" });
+  }
+  next(err);
 });
 
 const PORT = process.env.PORT || 8080;
