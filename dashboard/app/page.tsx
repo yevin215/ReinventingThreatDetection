@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 
 type RiskPayload = {
   heartRate?: number;
+  breathingRate?: number;
   stressIndex?: number;
   engagement?: number;
   riskScore: number;
@@ -16,11 +17,21 @@ export default function Home() {
   const [risk, setRisk] = useState<RiskPayload | null>(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io(
+      "https://threat-detection-backend-production.up.railway.app",
+      {
+        transports: ["websocket"],
+        secure: true,
+      }
+    );
 
     socket.on("connect", () => {
-      console.log("Connected to backend");
+      console.log("Connected:", socket.id);
       setConnected(true);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log("Connection error:", err.message);
     });
 
     socket.on("disconnect", () => {
@@ -65,7 +76,8 @@ export default function Home() {
             </div>
 
             <div className="text-sm opacity-70">
-              Heart Rate: {risk.heartRate ?? "-"} | Stress:{" "}
+              Heart Rate: {risk.heartRate ?? "-"} | Breathing:{" "}
+              {risk.breathingRate ?? "-"} | Stress:{" "}
               {risk.stressIndex ?? "-"} | Engagement:{" "}
               {risk.engagement ?? "-"}
             </div>
