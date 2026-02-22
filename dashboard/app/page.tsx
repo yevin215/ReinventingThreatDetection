@@ -67,7 +67,7 @@ export default function Home() {
         <div className="w-full">
           <div className="text-sm opacity-80 mb-2">Live Feed</div>
 
-          <div className="aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
+          <div className="aspect-[9/16] w-full max-w-sm mx-auto rounded-xl overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
             {frameSrc ? (
               <img
                 src={frameSrc}
