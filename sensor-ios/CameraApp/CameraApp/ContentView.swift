@@ -6,6 +6,9 @@ struct ContentView: View {
 
     private let apiKey = "vr4A2pbftf4qrI4HOU2mOaLy2Kb6qYFn5CNZbwfp"
     private let backendURL = "https://threat-detection-backend-production.up.railway.app/metrics"
+    
+    @State private var lastSentAt: Date = .distantPast
+    private let sendInterval: TimeInterval = 0.5
 
     @State private var stressIndex: Double = 0
     @State private var engagement: Double = 1.0
@@ -67,6 +70,13 @@ struct ContentView: View {
 
             let computedStress = min(1.0, max(0.0, (pulse - 60.0) / 60.0))
             let computedEngagement = 1.0
+            
+            let now = Date()
+            
+            guard now.timeIntervalSince(lastSentAt) >= sendInterval else { return }
+            lastSentAt = now
+            
+            let frame = captureScreenJPEGBase64(maxWidth: 640, quality: 0.35)
 
             stressIndex = computedStress
             engagement = computedEngagement
@@ -76,7 +86,8 @@ struct ContentView: View {
                     heartRate: pulse,
                     breathingRate: breath,
                     stressIndex: computedStress,
-                    engagement: computedEngagement
+                    engagement: computedEngagement,
+                    frameBase64: frame
                 )
             }
         }
@@ -87,6 +98,7 @@ struct ContentView: View {
         let breathingRate: Double
         let stressIndex: Double
         let engagement: Double
+        let frameBase64: String?
     }
 
     struct MetricsResponse: Codable {
@@ -98,8 +110,40 @@ struct ContentView: View {
         let riskScore: Double?
         let riskLevel: String?
     }
+    
+    private func captureScreenJPEGBase64(maxWidth: CGFloat = 640, quality: CGFloat = 0.35) -> String? {
+        guard let image = captureKeyWindowImage() else { return nil }
 
-    func sendMetrics(heartRate: Double, breathingRate: Double, stressIndex: Double, engagement: Double)
+        let resized = resizeImage(image, maxWidth: maxWidth)
+        guard let jpegData = resized.jpegData(compressionQuality: quality) else { return nil }
+
+        return jpegData.base64EncodedString()
+    }
+
+    private func captureKeyWindowImage() -> UIImage? {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return nil }
+
+        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
+        return renderer.image { ctx in
+            window.layer.render(in: ctx.cgContext)
+        }
+    }
+
+    private func resizeImage(_ image: UIImage, maxWidth: CGFloat) -> UIImage {
+        let size = image.size
+        guard size.width > maxWidth else { return image }
+
+        let scale = maxWidth / size.width
+        let newSize = CGSize(width: maxWidth, height: size.height * scale)
+
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+    }
+
+    func sendMetrics(heartRate: Double, breathingRate: Double, stressIndex: Double, engagement: Double, frameBase64: String?)
     {
         guard let url = URL(string: backendURL) else { return }
 
@@ -107,7 +151,8 @@ struct ContentView: View {
             heartRate: heartRate,
             breathingRate: breathingRate,
             stressIndex: stressIndex,
-            engagement: engagement
+            engagement: engagement,
+            frameBase64: frameBase64
         )
 
         var request = URLRequest(url: url)
@@ -115,6 +160,7 @@ struct ContentView: View {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         do
+            
         {
             request.httpBody = try JSONEncoder().encode(payload)
         }
