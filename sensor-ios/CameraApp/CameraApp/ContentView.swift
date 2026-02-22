@@ -16,47 +16,57 @@ struct ContentView: View {
         sdk.setApiKey(apiKey)
     }
 
-    var body: some View {
-        VStack(spacing: 12) {
+    var body: some View
+    {
+        VStack(spacing: 12)
+        {
             SmartSpectraView()
                 .frame(maxWidth: .infinity, maxHeight: 420)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
             Divider()
 
-            if let metrics = sdk.metricsBuffer {
+            if let metrics = sdk.metricsBuffer
+            {
                 let pulse = Double(metrics.pulse.rate.last?.value ?? 0)
                 let breath = Double(metrics.breathing.rate.last?.value ?? 0)
 
-                VStack(spacing: 8) {
+                VStack(spacing: 8)
+                {
                     Text("Pulse: \(pulse, specifier: "%.0f") BPM")
                     Text("Breathing: \(breath, specifier: "%.0f") RPM")
 
                     Text("Stress Index: \(stressIndex, specifier: "%.2f")")
                     Text("Engagement: \(engagement, specifier: "%.2f")")
 
-                    if let riskScore {
+                    if let riskScore
+                    {
                         Text("Risk Score: \(riskScore, specifier: "%.0f")")
                     }
-                    if let riskLevel {
+                    if let riskLevel
+                    {
                         Text("Risk Level: \(riskLevel)")
                             .font(.headline)
                     }
                 }
                 .font(.headline)
-            } else {
+            }
+            else
+            {
                 Text("Waiting for metrics…")
             }
         }
         .padding()
-        .onReceive(sdk.$metricsBuffer) { metrics in
+        .onReceive(sdk.$metricsBuffer)
+        {
+            metrics in
             guard let metrics else { return }
 
             let pulse = Double(metrics.pulse.rate.last?.value ?? 0)
             let breath = Double(metrics.breathing.rate.last?.value ?? 0)
 
             let computedStress = min(1.0, max(0.0, (pulse - 60.0) / 60.0))
-            let computedEngagement = 1.0 // static for now (until you wire a real signal)
+            let computedEngagement = 1.0
 
             stressIndex = computedStress
             engagement = computedEngagement
@@ -89,7 +99,8 @@ struct ContentView: View {
         let riskLevel: String?
     }
 
-    func sendMetrics(heartRate: Double, breathingRate: Double, stressIndex: Double, engagement: Double) {
+    func sendMetrics(heartRate: Double, breathingRate: Double, stressIndex: Double, engagement: Double)
+    {
         guard let url = URL(string: backendURL) else { return }
 
         let payload = MetricsRequest(
@@ -103,27 +114,36 @@ struct ContentView: View {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        do {
+        do
+        {
             request.httpBody = try JSONEncoder().encode(payload)
-        } catch {
+        }
+        catch
+        {
             print("Encode failed:", error.localizedDescription)
             return
         }
 
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error {
+        URLSession.shared.dataTask(with: request)
+        {
+            data, _, error in
+            if let error
+            {
                 print("Send failed:", error.localizedDescription)
                 return
             }
 
             guard let data else { return }
 
-            if let decoded = try? JSONDecoder().decode(MetricsResponse.self, from: data) {
-                DispatchQueue.main.async {
+            if let decoded = try? JSONDecoder().decode(MetricsResponse.self, from: data)
+            {
+                DispatchQueue.main.async
+                {
                     self.riskScore = decoded.riskScore
                     self.riskLevel = decoded.riskLevel
                 }
             }
-        }.resume()
+        }
+        .resume()
     }
 }
