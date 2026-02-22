@@ -3,8 +3,8 @@ import SmartSpectraSwiftSDK
 
 struct ContentView: View {
     @ObservedObject private var sdk = SmartSpectraSwiftSDK.shared
-    private let apiKey = "vr4A2pbftf4qrI4HOU2mOaLy2Kb6qYFn5CNZbwfp"
-    private let backendURL = "https://threat-detection-backend-production.up.railway.app/metrics"
+    private let apiKey = "mWUu2c54hR1GIDYHOtUCR6hxYJJNqwYi8RhBjun9"
+private let backendURL = "http://10.108.174.237:4000/metrics"
 
     init() {
         sdk.setApiKey(apiKey)
