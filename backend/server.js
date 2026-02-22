@@ -21,25 +21,19 @@ app.post("/metrics", (req, res) => {
 
   console.log("Incoming metrics:", data);
 
-  const heartRate = data.heartRate || 60;
-  const breathingRate = data.breathingRate || 12;
-
+  // Simple risk calculation
   const riskScore = Math.min(
     100,
-    heartRate * 0.7 + breathingRate * 2.5
+    (data.stressIndex || 0) * 60 +
+    (1 - (data.engagement || 1)) * 30 +
+    (data.heartRate || 60) * 0.1
   );
 
   let riskLevel = "GREEN";
-  if (riskScore > 85) riskLevel = "RED";
-  else if (riskScore > 60) riskLevel = "YELLOW";
+  if (riskScore > 70) riskLevel = "RED";
+  else if (riskScore > 40) riskLevel = "YELLOW";
 
-  const payload = {
-    heartRate,
-    breathingRate,
-    riskScore,
-    riskLevel,
-    timestamp: Date.now()
-  };
+  const payload = { ...data, riskScore, riskLevel };
 
   io.emit("riskUpdate", payload);
 
