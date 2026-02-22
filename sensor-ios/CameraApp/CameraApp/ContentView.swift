@@ -4,7 +4,7 @@ import SmartSpectraSwiftSDK
 struct ContentView: View {
     @ObservedObject private var sdk = SmartSpectraSwiftSDK.shared
 
-    private let apiKey = "vr4A2pbftf4qrI4HOU2mOaLy2Kb6qYFn5CNZbwfp"
+    private let apiKey = "3tPS4qXYHXaLQvvlw7CrO6Trk9D60OJa19YQ39yN"
     private let backendURL = "https://threat-detection-backend-production.up.railway.app/metrics"
     
     @State private var lastSentAt: Date = .distantPast
