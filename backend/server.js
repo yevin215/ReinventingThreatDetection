@@ -59,8 +59,8 @@ app.post("/metrics", (req, res) => {
   };
 
   io.emit("riskUpdate", payload);
-
-  res.json({ status: "ok" });
+  
+  res.json({ status: "ok", ...payload });
 });
 
 io.on("connection", (socket) => {
